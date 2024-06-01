@@ -1,0 +1,7 @@
+{
+	"tesseract_path": "B:\\Program Files\\Tesseract-OCR\\tesseract.exe",
+	"window_name": "elden ring",
+	"crop_dimensions": {"x": "754", "y": "500", "width": "412", "height": "90"},
+	"counter_text_path": "C:\\Soulsgame deaths counter.txt",
+	"counter_text_layout": "Deaths:"
+}
