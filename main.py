@@ -37,7 +37,12 @@ def capture_win_alt():
 		bmpinfo = bitmap.GetInfo()
 		bmpstr = bitmap.GetBitmapBits(True)
 
-		img = cv2.cvtColor(np.frombuffer(bmpstr, dtype=np.uint8).reshape((bmpinfo["bmHeight"], bmpinfo["bmWidth"], 4)), cv2.COLOR_BGR2RGB)
+		# if the window wasn't found, the array conversion will fail. If so, don't return an image.
+		try:
+			img = cv2.cvtColor(np.frombuffer(bmpstr, dtype=np.uint8).reshape((bmpinfo["bmHeight"], bmpinfo["bmWidth"], 4)), cv2.COLOR_BGR2RGB)
+		except Exception as e:
+			print(e)
+			return None
 
 		#crop coords
 		# convert to config
@@ -118,5 +123,7 @@ if __name__ == '__main__':
 		end = time.time()
 
 		# print('read/write time: ', end-start)
-
-		time.sleep(0.4)
+		if img is not None:
+			time.sleep(0.4)
+		else:
+			time.sleep(5) # sleep for longer if we failed to find the window. It is probably minimized.
