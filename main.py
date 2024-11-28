@@ -113,17 +113,19 @@ if __name__ == '__main__':
 		# print('capture win alt: ', end-start)
 
 		start = time.time()
+		found = False
 		if img is not None:
 			text = pytesseract.image_to_string(img)
 			# if text.lower():
 			# 	cv2.imwrite(f"cropped_{num_saved}.png", img)
 			# 	num_saved += 1
 			if 'youdied' in text.lower().replace(' ', '').strip():
+				found = True
 				write_to_file()
 		end = time.time()
 
 		# print('read/write time: ', end-start)
-		if img is not None:
+		if img is not None and not found:
 			time.sleep(0.4)
 		else:
 			time.sleep(5) # sleep for longer if we failed to find the window. It is probably minimized.
