@@ -45,7 +45,6 @@ def capture_win_alt():
 			return None
 
 		#crop coords
-		# convert to config
 		x = int(CONFIG["crop_dimensions"]['x'])
 		y = int(CONFIG["crop_dimensions"]['y'])
 		width = int(CONFIG["crop_dimensions"]['width'])
@@ -53,16 +52,11 @@ def capture_win_alt():
 
 		img = img[y:y+height, x:x+width] # crop image
 
-		# img = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2GRAY)
+		img = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2GRAY)
 
-		# Black and White processing
-		# img = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
-		#Apply dilation and erosion to remove noise
-		# kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
-		# img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel, iterations=3)
-		# img = cv2.GaussianBlur(img, (5,5), 0)
+		normalized_gray_image = cv2.normalize(img, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX)
 
-		# cv2.imwrite("cropped.png", img)
+		cv2.imwrite("cropped.png", normalized_gray_image)
 
 		win32gui.DeleteObject(bitmap.GetHandle())
 		save_dc.DeleteDC()
