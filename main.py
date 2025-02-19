@@ -56,14 +56,15 @@ def capture_win_alt():
 
 		normalized_gray_image = cv2.normalize(img, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX)
 
-		cv2.imwrite("cropped.png", normalized_gray_image)
+		# cv2.imwrite("cropped.png", normalized_gray_image)
 
+		# cleanup
 		win32gui.DeleteObject(bitmap.GetHandle())
 		save_dc.DeleteDC()
 		mfc_dc.DeleteDC()
 		win32gui.ReleaseDC(hwnd, hwnd_dc)
 
-	return img
+	return normalized_gray_image
 
 # find name of window
 def get_window_name():
@@ -95,24 +96,28 @@ def write_to_file():
 if __name__ == '__main__':
 	pytesseract.pytesseract.tesseract_cmd = str(CONFIG['tesseract_path'])
 	num_saved = 0
+	start = time.time()
+	get_window_name()
+	end = time.time()
+	print('window name: ', end-start)
 	while True:
-		start = time.time()
-		get_window_name()
-		end = time.time()
-		# print('window name: ', end-start)
-
-		start = time.time()
-		img = capture_win_alt()
-		end = time.time()
-		# print('capture win alt: ', end-start)
+		try:
+			# start = time.time()
+			img = capture_win_alt()
+			# end = time.time()
+			# print('capture win alt: ', end-start)
+		except Exception as e:
+			print('Failed to take screenshot: ', str(e))
 
 		start = time.time()
 		found = False
 		if img is not None:
 			text = pytesseract.image_to_string(img)
 			# if text.lower():
+			# 	print(text.lower())
 			# 	cv2.imwrite(f"cropped_{num_saved}.png", img)
 			# 	num_saved += 1
+			#! TODO: Allow only part of the letters to match. Ex. If the program finds 'youdoed', this should still count as a success.
 			if 'youdied' in text.lower().replace(' ', '').strip():
 				found = True
 				write_to_file()
@@ -120,6 +125,6 @@ if __name__ == '__main__':
 
 		# print('read/write time: ', end-start)
 		if img is not None and not found:
-			time.sleep(0.4)
+			time.sleep(0.1)
 		else:
 			time.sleep(5) # sleep for longer if we failed to find the window. It is probably minimized.
